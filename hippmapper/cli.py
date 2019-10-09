@@ -9,13 +9,13 @@ import os
 import sys
 import warnings
 
-from hippmapper import __version__
-from hippmapper import gui
-from hippmapper.segment import hippmapper
-from hippmapper.convert import filetype
-from hippmapper.preprocess import biascorr, trim_like
-from hippmapper.qc import seg_qc
-from hippmapper.stats import summary_hp_vols
+from icvmapper import __version__
+from icvmapper import gui
+from icvmapper.segment import icvmapper
+from icvmapper.convert import filetype
+from icvmapper.preprocess import biascorr, trim_like
+from icvmapper.qc import seg_qc
+from icvmapper.stats import summary_hp_vols
 
 warnings.simplefilter("ignore")
 # warnings.simplefilter("ignore", RuntimeWarning)
@@ -32,8 +32,8 @@ def run_filetype(args):
     filetype.main(args)
 
 
-def run_hippmapper(args):
-    hippmapper.main(args)
+def run_icvmapper(args):
+    icvmapper.main(args)
 
 
 def run_hp_seg_summary(args):
@@ -61,11 +61,11 @@ def get_parser():
     # --------------
 
     # seg hippocampus (hipp)
-    hipp_parser = hippmapper.parsefn()
+    hipp_parser = icvmapper.parsefn()
     parser_seg_hipp = subparsers.add_parser('seg_hipp', add_help=False, parents=[hipp_parser],
                                             help="Segment hippocampus using a trained CNN",
                                             usage=hipp_parser.usage)
-    parser_seg_hipp.set_defaults(func=run_hippmapper)
+    parser_seg_hipp.set_defaults(func=run_icvmapper)
 
     # --------------
 

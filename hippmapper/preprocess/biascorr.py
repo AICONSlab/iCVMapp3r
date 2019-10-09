@@ -8,7 +8,7 @@ import sys
 import multiprocessing
 import os
 from datetime import datetime
-from hippmapper.utils import endstatement
+from icvmapper.utils import endstatement
 
 from nipype.interfaces.ants import N4BiasFieldCorrection
 

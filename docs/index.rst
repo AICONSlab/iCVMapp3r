@@ -1,17 +1,17 @@
-.. HippMapp3r documentation master file, created by
+.. iCVMapp3r documentation master file, created by
    sphinx-quickstart on Fri Dec 14 15:34:18 2018.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to HippMapp3r's documentation!
+Welcome to iCVMapp3r's documentation!
 ==================================
 
-.. image:: images/hippmapper_icon.png
+.. image:: images/icvmapper_icon.png
     :width: 550px
     :alt: Graph abstract
     :align: center
 
-*HippMapp3r* (pronounced hippmapper) is a CNN-based segmentation technique of the whole hippocampus
+*iCVMapp3r* (pronounced icvmapper) is a CNN-based segmentation technique of the whole hippocampus
 using MRI images from BrainLab.
 It can deal with brains with extensive atrophy and segments the hippocampi in seconds.
 It uses a T1-weighted image as the only input and segments both with-skull and skull-stripped images.

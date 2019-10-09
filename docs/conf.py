@@ -19,7 +19,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'HippMapp3r'
+project = 'iCVMapp3r'
 copyright = '2018, BrainLab'
 author = 'Maged Goubran, Edward Ntiri, Melissa Holmes, Hassan Akhavein, Sandra Black'
 
@@ -106,7 +106,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'HippMapp3rdoc'
+htmlhelp_basename = 'iCVMapp3rdoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -133,7 +133,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'HippMapp3r.tex', 'HippMapp3r Documentation',
+    (master_doc, 'iCVMapp3r.tex', 'iCVMapp3r Documentation',
      'Maged Goubran, Edward Ntiri, Melissa Holmes, Hassan Akhavein, Sandra Black', 'manual'),
 ]
 
@@ -143,7 +143,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'hippmapper', 'HippMapp3r Documentation',
+    (master_doc, 'icvmapper', 'iCVMapp3r Documentation',
      [author], 1)
 ]
 
@@ -154,7 +154,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'HippMapp3r', 'HippMapp3r Documentation',
-     author, 'HippMapp3r', 'One line description of project.',
+    (master_doc, 'iCVMapp3r', 'iCVMapp3r Documentation',
+     author, 'iCVMapp3r', 'One line description of project.',
      'Miscellaneous'),
 ]

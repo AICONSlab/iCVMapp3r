@@ -1,9 +1,9 @@
-import hippmapper.convert
-import hippmapper.preprocess
-import hippmapper.segment
-import hippmapper.stats
-import hippmapper.qc
-import hippmapper.utils
+import icvmapper.convert
+import icvmapper.preprocess
+import icvmapper.segment
+import icvmapper.stats
+import icvmapper.qc
+import icvmapper.utils
 
 VERSION = (0, 1, 0)
 __version__ = '.'.join(map(str, VERSION))

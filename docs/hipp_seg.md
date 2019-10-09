@@ -10,7 +10,7 @@ Watch this video tutorial:
 
 Or follow the steps below:
 
-After opening the HippMapper GUI, click "Hippocampus" under the "Segmentation" tab. Wait for a new pop-up window to appear. The window should look like the image below.
+After opening the iCVMapper GUI, click "Hippocampus" under the "Segmentation" tab. Wait for a new pop-up window to appear. The window should look like the image below.
 
 ![hippocampus pop up window](images/hipp_1.PNG)
 
@@ -21,7 +21,7 @@ Your output file will automatically appear in your t1w folder.
 
 ## Command Line
 
-    hippmapper seg_hipp
+    icvmapper seg_hipp
     
     Optional arguments:
     -s , --subj       input subject
@@ -32,8 +32,8 @@ Your output file will automatically appear in your t1w folder.
     -ss , --session   input session for longitudinal studies
     
     Examples:
-    hippmapper seg_hipp -s subjectname -b
-    hippmapper seg_hipp -t1 subject_T1_nu.nii.gz -o subject_hipp.nii.gz
+    icvmapper seg_hipp -s subjectname -b
+    icvmapper seg_hipp -t1 subject_T1_nu.nii.gz -o subject_hipp.nii.gz
 
 The output should look like this.:
 
