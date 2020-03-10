@@ -25,11 +25,11 @@ You can see all the icvmapper commands by typing either of the following lines:
 
 Once you know the command you want to know from the list, you can see more information about the command. For example, to learn more about seg_hfb:
 
-    icvmapper seg_hipp -h
-    icvmapper seg_hipp --help
+    icvmapper seg_icv -h
+    icvmapper seg_icv --help
 
-## Hippocampal volumes
-To extract hippocampal volumes use the GUI (Stats/Hippocampal Volumes) or command line:
+## Intracranial volumes
+To extract ICV use the GUI (Stats/ICV) or command line:
 
     icvmapper stats_hp -h
 
@@ -44,7 +44,7 @@ They can also be created through the GUI or command line:
 
 The QC image should look like this:
 
-![Quality control imagefor hippocampus segmentation](images/hipp_qc_corr.png)
+![Quality control image for icv segmentation](images/ICV_qc_corr.png)
 
 
 ## Logs

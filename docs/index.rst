@@ -11,9 +11,9 @@ Welcome to iCVMapp3r's documentation!
     :alt: Graph abstract
     :align: center
 
-*iCVMapp3r* (pronounced icvmapper) is a CNN-based segmentation technique of the whole hippocampus
+*iCVMapp3r* (pronounced icvmapper) is a CNN-based segmentation technique of the intracranial volume (ICV)
 using MRI images from BrainLab.
-It can deal with brains with extensive atrophy and segments the hippocampi in seconds.
+It can deal with brains with extensive atrophy and segments the ICV in seconds.
 It uses a T1-weighted image as the only input and segments both with-skull and skull-stripped images.
 
 .. image:: images/graph_abstract.png
@@ -28,7 +28,7 @@ It uses a T1-weighted image as the only input and segments both with-skull and s
    before_install
    install
    beginner
-   hipp_seg
+   icv_seg
    issues
    docker
 
