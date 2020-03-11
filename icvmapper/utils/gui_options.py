@@ -8,6 +8,7 @@ import sys
 import re
 import subprocess
 from PyQt5 import QtGui, QtCore, QtWidgets
+from collections import OrderedDict
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = "3"
 
@@ -31,6 +32,7 @@ def parseargs():
     parser.add_argument('-f', '--fields', type=str, nargs='+', help="fields for options")
     parser.add_argument('-v', '--vols', type=str, nargs='+', help="volumes for reading")
     parser.add_argument('-d', '--dirs', type=str, nargs='+', help="directories for reading")
+    parser.add_argument('-c', '--checks', type=str, nargs='+', help="flags for reading")
     parser.add_argument('-hf', '--helpfun', type=str, help="help fun")
 
     args = parser.parse_args()
@@ -39,12 +41,13 @@ def parseargs():
     fields = args.fields
     vols = args.vols
     dirs = args.dirs
+    checks = args.checks
     helpfun = args.helpfun
 
-    return title, vols, dirs, fields, helpfun
+    return title, vols, dirs, fields, checks, helpfun
 
 
-def OptsMenu(title, vols=None, dirs=None, fields=None, helpfun=None):
+def OptsMenu(title, vols=None, dirs=None, fields=None, checks=None, helpfun=None):
     # create GUI
     main = QtWidgets.QMainWindow()
 
@@ -57,9 +60,10 @@ def OptsMenu(title, vols=None, dirs=None, fields=None, helpfun=None):
 
     layout.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
 
-    linedits = {}
-    buttons = {}
-    labels = {}
+    linedits = OrderedDict()
+    buttons = OrderedDict()
+    labels = OrderedDict()
+    flags = OrderedDict()
 
     if dirs:
 
@@ -94,6 +98,21 @@ def OptsMenu(title, vols=None, dirs=None, fields=None, helpfun=None):
 
             # Layout for widgets        
             layout.addRow("%s" % field, linedits["%s" % field])
+    
+    if checks:
+        for c, checkbox in enumerate(checks):
+            # create checkbox button for flags, place it in a horizontal box
+            horiz_box = QtWidgets.QHBoxLayout()
+            buttons[checkbox] = QtWidgets.QCheckBox()
+            buttons[checkbox].setText(checkbox)
+            flags[checkbox] = False
+            buttons[checkbox].stateChanged.connect(lambda: checkbox_state(buttons, flags))
+
+            horiz_box.addWidget(buttons[checkbox])  # add to box
+
+            labels[checkbox] = QtWidgets.QLabel('%s' % checkbox)  # add the label here for the form
+            layout.addRow(labels[checkbox], horiz_box)
+
 
     # Create push button
     helpbutton = QtWidgets.QPushButton('Help')
@@ -106,7 +125,7 @@ def OptsMenu(title, vols=None, dirs=None, fields=None, helpfun=None):
     helpbutton.clicked.connect(lambda: print_help(main, helpfun))
 
     fn_name = title.replace(' ', '_').lower()
-    submit.clicked.connect(lambda: parse_inputs(fn_name, labels, linedits, vols, dirs, fields))
+    submit.clicked.connect(lambda: parse_inputs(fn_name, labels, linedits, vols, dirs, fields, flags))
 
     return widget, linedits, labels
 
@@ -135,7 +154,12 @@ def get_dname(main, labels, indir):
     return dfile
 
 
-def parse_inputs(fn_name, labels, linedits, vols, dirs, fields):
+def checkbox_state(button, flags):
+    for label in flags.keys():
+        flags[label] = True if button[label].isChecked() else False
+
+
+def parse_inputs(fn_name, labels, linedits, vols, dirs, fields, flags):
     cmd = "icvmapper %s" % fn_name
 
     if vols:
@@ -160,6 +184,10 @@ def parse_inputs(fn_name, labels, linedits, vols, dirs, fields):
             if in_field != "":
                 fields_cmd = " --%s %s" % (field, in_field)
                 cmd = cmd + "%s" % fields_cmd
+    if flags:
+        for c, checkbox in enumerate(flags.keys()):
+            if flags[checkbox]:  # add the flag if it was checked
+                cmd += " --%s" % checkbox
 
     print("\n running iCVMapp3r with the following command: \n\n %s \n" % cmd)
 
@@ -193,13 +221,13 @@ def print_help(main, helpfun):
 
 
 def main():
-    [title, vols, dirs, fields, helpfun] = parseargs()
+    [title, vols, dirs, fields, checks, helpfun] = parseargs()
     helpfunhtml = helpfun.replace('\n','<br>')
 
     # Create an PyQT5 application object.
     app = QtWidgets.QApplication(sys.argv)
     gui_name = title.replace('_', ' ').upper()
-    menu, linedits, labels = OptsMenu(title=gui_name, vols=vols, dirs=dirs, fields=fields, helpfun=helpfunhtml)
+    menu, linedits, labels = OptsMenu(title=gui_name, vols=vols, dirs=dirs, fields=fields, checks=checks, helpfun=helpfunhtml)
     menu.show()
     app.exec_()
     app.processEvents()

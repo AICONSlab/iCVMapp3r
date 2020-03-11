@@ -12,7 +12,7 @@ warnings.filterwarnings("ignore")
 
 
 def parsefn():
-    parser = argparse.ArgumentParser(description='Generates volumetric summary of hippocampus segmentations',
+    parser = argparse.ArgumentParser(description='Generates volumetric summary of ICV segmentations',
                                      usage="%(prog)s -i [ in_dir ] -o [ out_csv ]")
 
     required = parser.add_argument_group('required arguments')
@@ -20,7 +20,7 @@ def parsefn():
     required.add_argument('-i', '--in_dir', type=str, required=True, metavar='',
                           help='input directory containing subjects')
     required.add_argument('-o', '--out_csv', type=str, metavar='',
-                          help='output stats ex: hp_vols_summary.csv', default='hipp_volumes.csv')
+                          help='output stats ex: icv_vols_summary.csv', default='icv_volumes.csv')
 
     return parser
 
@@ -40,14 +40,14 @@ def main(args):
     parser = parsefn()
     input_dir, out_csv = parse_inputs(parser, args)
 
-    hp_label = [1, 2]
-    hp_abb = ['Right_HP', 'Left_HP']
-    mask_name = 'hipp_pred.nii.gz'
+    icv_label = [1]
+    icv_abb = ['ICV']
+    mask_name = 'icv_pred.nii.gz'
 
     subjs_dirs = [subj for subj in os.listdir(input_dir) if os.path.isdir(os.path.join(input_dir, subj))]
     index = []
     my_index = []
-    volume = np.zeros([len(subjs_dirs), len(hp_abb)])
+    volume = np.zeros([len(subjs_dirs), len(icv_abb)])
     for i in range(0, len(subjs_dirs)):
         my_index.append(i)
         if glob.glob(os.path.join(input_dir, subjs_dirs[i], '*%s' % mask_name)):
@@ -60,17 +60,17 @@ def main(args):
             mask_hdr = mask.get_header()
             voxel_size = mask_hdr.get_zooms()
             voxel_volume = voxel_size[0] * voxel_size[1] * voxel_size[2]
-            for j in range(0, len(hp_label)):
-                volume[i, j] = np.shape(np.nonzero(mask_data == hp_label[j]))[1] * voxel_volume
+            for j in range(0, len(icv_label)):
+                volume[i, j] = np.shape(np.nonzero(mask_data == icv_label[j]))[1] * voxel_volume
         else:
             print(subjs_dirs[i], ' is missing')
 
-    cols = ['%s_Volume' % hp_abb[0], '%s_Volume' % hp_abb[1]]
+    cols = ['%s_Volume' % icv_abb[0], '%s_Volume' % icv_abb[1]]
 
     df = pd.DataFrame(volume, index=subjs_dirs, columns=cols)
     df.index.name = 'Subjects'
     df = df[(df.T != 0).any()]
-    print('saving hippocampus volumetric csv')
+    print('saving ICV volumetric csv')
     df.round(3).to_csv(out_csv)
 
 
