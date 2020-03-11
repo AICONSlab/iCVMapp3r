@@ -15,7 +15,7 @@ from icvmapper.segment import icvmapper
 from icvmapper.convert import filetype
 from icvmapper.preprocess import biascorr, trim_like
 from icvmapper.qc import seg_qc
-from icvmapper.stats import summary_hp_vols
+from icvmapper.stats import summary_icv_vols
 from icvmapper.utils.depends_manager import add_paths
 
 warnings.simplefilter("ignore")
@@ -37,8 +37,8 @@ def run_icvmapper(args):
     icvmapper.main(args)
 
 
-def run_hp_seg_summary(args):
-    summary_hp_vols.main(args)
+def run_icv_seg_summary(args):
+    summary_icv_vols.main(args)
 
 
 def run_seg_qc(args):
@@ -61,12 +61,12 @@ def get_parser():
     subparsers = parser.add_subparsers()
     # --------------
 
-    # seg hippocampus (hipp)
-    hipp_parser = icvmapper.parsefn()
-    parser_seg_hipp = subparsers.add_parser('seg_hipp', add_help=False, parents=[hipp_parser],
-                                            help="Segment hippocampus using a trained CNN",
-                                            usage=hipp_parser.usage)
-    parser_seg_hipp.set_defaults(func=run_icvmapper)
+    # seg intracranial volume  (icv)
+    icv_parser = icvmapper.parsefn()
+    parser_seg_icv = subparsers.add_parser('seg_icv', add_help=False, parents=[icv_parser],
+                                            help="Segment intracranial volume using a trained CNN",
+                                            usage=icv_parser.usage)
+    parser_seg_icv.set_defaults(func=run_icvmapper)
 
     # --------------
 
@@ -97,12 +97,12 @@ def get_parser():
 
     # --------------
 
-    # hipp vol seg
-    hp_vol_parser = summary_hp_vols.parsefn()
-    parser_stats_hp = subparsers.add_parser('stats_hp', add_help=False, parents=[hp_vol_parser],
-                                            help="Generates volumetric summary of hippocampus segmentations",
-                                            usage=hp_vol_parser.usage)
-    parser_stats_hp.set_defaults(func=run_hp_seg_summary)
+    # ICV vol seg
+    icv_vol_parser = summary_icv_vols.parsefn()
+    parser_stats_icv = subparsers.add_parser('stats_icv', add_help=False, parents=[icv_vol_parser],
+                                            help="Generates volumetric summary of ICV segmentations",
+                                            usage=icv_vol_parser.usage)
+    parser_stats_icv.set_defaults(func=run_icv_seg_summary)
 
     # --------------
 

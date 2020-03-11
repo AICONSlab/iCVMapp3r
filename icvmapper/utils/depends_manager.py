@@ -2,7 +2,7 @@ import os
 import sys
 import subprocess
 
-from miracl import DEPENDS_DIR
+from icvmapper import DEPENDS_DIR
 
 class add_paths():
     """ Context manager to add necessary paths to PATH environment variable. Files will be removed after use
@@ -24,7 +24,7 @@ class add_paths():
                     os.environ['PATH'] += os.pathsep + self.command_paths[command]
                     self.added_paths.append(self.command_paths[command])
                 else:
-                    print('ERROR: %s is required to continue. Please install using the instructions on https://ventmapp3r.readthedocs.io/en/latest/install-local.html' \
+                    print('ERROR: %s is required to continue. Please install using the instructions on https://icvmapp3r.readthedocs.io/en/latest/install-local.html' \
                         % (command))
                     sys.exit()
 

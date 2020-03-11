@@ -14,10 +14,10 @@ import nibabel as nib
 from nilearn.image import reorder_img, resample_img, resample_to_img, largest_connected_component_img, smooth_img, \
     math_img
 from nipype.interfaces.c3 import C3d
-from hypermatter.utils import endstatement
-from hypermatter.deep.predict import run_test_case
-from hypermatter.preprocess import biascorr
-from hypermatter.qc import seg_qc
+from icvmapper.utils import endstatement
+from icvmapper.deep.predict import run_test_case
+from icvmapper.preprocess import biascorr
+from icvmapper.qc import seg_qc
 import subprocess
 import warnings
 from termcolor import colored
@@ -205,19 +205,12 @@ def main(args):
         hfb = os.path.realpath(__file__)
         hyper_dir = Path(hfb).parents[2]
 
-        if fl is None and t2 is None:
+        if t1 and fl is None and t2 is None:
             test_seqs = [t1]
             training_mods = ["t1"]
             model_name = 'hfb_t1only_mcdp'
             model_name_woc = 'hfb_t1'
             print("\n found only t1-w, using the %s model" % model_name)
-
-        elif t2 is None and fl:
-            test_seqs = [t1, fl]
-            training_mods = ["t1", "flair"]
-            model_name = 'hfb_t1fl_mcdp'
-            model_name_woc = 'hfb_t1fl'
-            print("\n found t1 and t2 sequences, using the %s model" % model_name)
 
         else:
             test_seqs = [t1, fl, t2]
