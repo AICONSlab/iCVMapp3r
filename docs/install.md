@@ -17,11 +17,11 @@ For the main required Python packages (numpy, scipy, etc.) we recommend using
     If you want to create a virtual environment where iCVMapp3r can be run,
 
         conda create -n icvmapper python=3.6 anaconda
-        source activate icvmapper
+        conda activate icvmapper
     
     To end the session,
     
-        source deactivate
+        conda deactivate
     
     To remove the environment
     
