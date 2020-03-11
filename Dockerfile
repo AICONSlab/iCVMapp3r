@@ -30,7 +30,7 @@ ENV FSLDIR="/usr/share/fsl/5.0" \
     FSLWISH="/usr/bin/wish" \
     POSSUMDIR="/usr/share/fsl/5.0"
 
-ENV PATH="/usr/lib/fsl/5.0":${PATH}
+ENV PATH="/usr/lib/fsl/5.0:${PATH}"
 
 # Install ANTs
 ENV ANTSPATH /opt/ANTs
@@ -53,13 +53,13 @@ RUN git clone https://github.com/mgoubran/iCVMapp3r.git && \
 
 # Download models, store in directory
 RUN mkdir /iCVMapp3r/models && \
-    wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1ftE79HF-sWXGa_X2bOUc-ldyWQEB5-Dz' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1ftE79HF-sWXGa_X2bOUc-ldyWQEB5-Dz" -O /iCVMapp3r/models/hipp_model.json && \
+    wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1ftE79HF-sWXGa_X2bOUc-ldyWQEB5-Dz' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1ftE79HF-sWXGa_X2bOUc-ldyWQEB5-Dz" -O /iCVMapp3r/models/icv_model.json && \
     rm -rf /tmp/cookies.txt && \
-    wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=19zEi7552X93_5JbEokfry2Y28gFeVGt2' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=19zEi7552X93_5JbEokfry2Y28gFeVGt2" -O /iCVMapp3r/models/hipp_model_weights.h5 && \
+    wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=19zEi7552X93_5JbEokfry2Y28gFeVGt2' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=19zEi7552X93_5JbEokfry2Y28gFeVGt2" -O /iCVMapp3r/models/icv_model_weights.h5 && \
     rm -rf /tmp/cookies.txt && \
-    wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1NmyniIkAk_wY2OW4YqEp9vF7IlVsRfrA' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1NmyniIkAk_wY2OW4YqEp9vF7IlVsRfrA" -O /iCVMapp3r/models/hipp_zoom_model.json && \
+    wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1NmyniIkAk_wY2OW4YqEp9vF7IlVsRfrA' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1NmyniIkAk_wY2OW4YqEp9vF7IlVsRfrA" -O /iCVMapp3r/models/icv_zoom_model.json && \
     rm -rf /tmp/cookies.txt && \
-    wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=10uPh9byC-7Qj7Duwgh9gyQcSXH-CwWz1' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=10uPh9byC-7Qj7Duwgh9gyQcSXH-CwWz1" -O /iCVMapp3r/models/hipp_zoom_model_weights.h5 && \
+    wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=10uPh9byC-7Qj7Duwgh9gyQcSXH-CwWz1' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=10uPh9byC-7Qj7Duwgh9gyQcSXH-CwWz1" -O /iCVMapp3r/models/icv_zoom_model_weights.h5 && \
     rm -rf /tmp/cookies.txt
 
 # Run icvmapper when the container launches
