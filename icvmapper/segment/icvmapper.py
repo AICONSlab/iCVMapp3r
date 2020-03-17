@@ -208,21 +208,21 @@ def main(args):
             test_seqs = [t1]
             training_mods = ["t1"]
             model_name = 'hfb_t1only_mcdp'
-            model_name_woc = 'hfb_t1'
+            model_name_woc = 'hfb'
             print("\n found only t1-w, using the %s model" % model_name)
 
         elif t2 is None and fl:
             test_seqs = [t1, fl]
             training_mods = ["t1", "flair"]
             model_name = 'hfb_t1fl_mcdp'
-            model_name_woc = 'hfb_t1fl'
+            model_name_woc = 'hfb'
             print("\n found t1 and fl sequences, using the %s model" % model_name)
 
         elif fl is None and t2:
             test_seqs = [t1, t2]
             training_mods = ["t1", "t2"]
             model_name = 'hfb_t1t2_mcdp'
-            model_name_woc = 'hfb_t1t2'
+            model_name_woc = 'hfb'
             print("\n found t1 and t2 sequences, using the %s model" % model_name)
 
         else:
