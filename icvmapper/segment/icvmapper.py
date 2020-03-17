@@ -208,21 +208,21 @@ def main(args):
             test_seqs = [t1]
             training_mods = ["t1"]
             model_name = 'hfb_t1only_mcdp'
-            model_name_woc = 'hfb'
+            model_name_woc = 'hfb_t1'
             print("\n found only t1-w, using the %s model" % model_name)
 
         elif t2 is None and fl:
             test_seqs = [t1, fl]
             training_mods = ["t1", "flair"]
             model_name = 'hfb_t1fl_mcdp'
-            model_name_woc = 'hfb'
+            model_name_woc = 'hfb_t1fl'
             print("\n found t1 and fl sequences, using the %s model" % model_name)
 
         elif fl is None and t2:
             test_seqs = [t1, t2]
             training_mods = ["t1", "t2"]
             model_name = 'hfb_t1t2_mcdp'
-            model_name_woc = 'hfb'
+            model_name_woc = 'hfb_t1t2'
             print("\n found t1 and t2 sequences, using the %s model" % model_name)
 
         else:
@@ -386,7 +386,7 @@ def main(args):
             nib.save(masked_t1_std, t1_masked_name_std)
 
         # predict cerebellum
-        if woc == 1:
+        if woc == 1 and model_name_woc == 'hfb':
             print("\n predicting approximate cerebellar mask")
 
             cereb_prediction = '%s/%s_T1acq_nu_cerebellum_pred.nii.gz' % (subj_dir, subj) \
@@ -441,6 +441,8 @@ def main(args):
                     if bias is True else '%s/%s_masked_woc_std_orient.nii.gz' % (subj_dir, os.path.basename(t1).split('.')[0])
                 woc_t1 = math_img("img1 * img2", img1=t1_img, img2=nib.load(woc_pred_std_orient))
                 nib.save(woc_t1, t1_woc_name)
+        else:
+            print('Removing cerebellum is available only when all 3 sequence t1, flair, and t2 have existed.')
 
         print("\n generating mosaic image for qc")
 
