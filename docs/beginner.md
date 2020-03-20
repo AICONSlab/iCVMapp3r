@@ -44,7 +44,7 @@ They can also be created through the GUI or command line:
 
 The QC image should look like this:
 
-![Quality control image for icv segmentation](images/ICV_qc_corr.png)
+![Quality control image for icv segmentation](images/icv_seg_qc.png)
 
 
 ## Logs
