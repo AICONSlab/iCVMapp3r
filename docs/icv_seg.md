@@ -12,7 +12,7 @@ Or follow the steps below:
 
 After opening the iCVMapper GUI, click "ICV" under the "Segmentation" tab. Wait for a new pop-up window to appear. The window should look like the image below.
 
-![icv pop up window](images/icv_1.PNG)
+![icv pop up window](images/icvmapper_seg_popup.png)
 
 Click "Select t1w" and chose your T1 image. Click "Run".
 Type your desired output name in the "out" box.
@@ -24,12 +24,19 @@ Your output file will automatically appear in your t1w folder.
     icvmapper seg_icv
     
     Optional arguments:
-    -s , --subj       input subject
-    -t1 , --t1w       input T1-weighted
-    -b, --bias        bias field correct image before segmentation
-    -o , --out        output prediction
-    -f, --force       overwrite existing segmentation
-    -ss , --session   input session for longitudinal studies
+    -h, --help           show this help message and exit
+    -s , --subj          input subject
+    -fl , --flair        input Flair
+    -t1 , --t1w          input T1-weighted
+    -t2 , --t2w          input T2-weighted
+    -o , --out           output prediction
+    -b, --bias           bias field correct image before segmentation
+    -rc , --rmcereb      remove cerebellum
+    -ign_ort, --ign_ort  ignore orientation if tag is wrong
+    -f, --force          overwrite existing segmentation
+    -n , --num_mc        number of Monte Carlo Dropout samples
+    -th , --thresh       threshold
+    -ss , --session      input session for longitudinal studies
     
     Examples:
     icvmapper seg_icv -s subjectname -b
@@ -37,4 +44,4 @@ Your output file will automatically appear in your t1w folder.
 
 The output should look like this.:
 
-![icv segmentation](images/3d_snap_resize.png)
+![icv segmentation](images/icv_seg_qc.png)
