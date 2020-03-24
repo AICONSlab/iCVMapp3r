@@ -51,7 +51,7 @@ For the main required Python packages (numpy, scipy, etc.) we recommend using
 
 ## Download deep models
 
-Download the models from [this link](https://drive.google.com/open?id=10aVCDurd_mcB49mJfwm658IZg33u0pd2) and place them in the "models" directory
+Download the models from [this link](https://drive.google.com/drive/folders/1zKNVrRPRQYHesRgFWjSD6CTPsha4hBsZ?usp=sharing) and place them in the "models" directory
 
 ## For tab completion
     pip3 install argcomplete

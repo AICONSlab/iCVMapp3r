@@ -21,7 +21,7 @@
 
 project = 'iCVMapp3r'
 copyright = '2018, BrainLab'
-author = 'Maged Goubran, Edward Ntiri, Melissa Holmes, Hassan Akhavein, Sandra Black'
+author = 'Maged Goubran, Edward Ntiri, Parisa M. Forooshani, Melissa Holmes, Hassan Akhavein, Sandra Black'
 
 # The short X.Y version
 version = ''
