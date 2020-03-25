@@ -44,4 +44,4 @@ Your output file will automatically appear in your t1w folder.
 
 The output should look like this.:
 
-![icv segmentation](images/icv_seg_qc.png)
+![icv segmentation](images/icv_seg_example.png)
