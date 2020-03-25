@@ -31,7 +31,7 @@ Once you know the command you want to know from the list, you can see more infor
 ## Intracranial volumes
 To extract ICV use the GUI (Stats/ICV) or command line:
 
-    icvmapper stats_hp -h
+    icvmapper stats_icv -h
 
 ## QC
 QC files are automatically generated in a sub-folder within the subject folder.
