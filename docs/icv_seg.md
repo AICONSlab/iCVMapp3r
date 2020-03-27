@@ -14,8 +14,12 @@ After opening the iCVMapper GUI, click "ICV" under the "Segmentation" tab. Wait 
 
 ![icv pop up window](images/icvmapper_seg_popup.png)
 
-Click "Select t1w" and chose your T1 image. Click "Run".
+Click "Select t1w" and choose your T1 image.
+Click either of "Select t2w" and "Select flair" (with respect to the sequences you have) and select the correspending images.
+Click "Run".
 Type your desired output name in the "out" box.
+If you want to overwrite the previous segmentation results, check the box beside "force"
+Check off "rmcereb" if you want to generate a segmentation with a removed cerebellum, and "bias" if you want to bias field correct the sequences using N4 
 Your output file will automatically appear in your t1w folder.
 
 
