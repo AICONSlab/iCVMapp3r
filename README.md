@@ -6,8 +6,7 @@ It can deal with brains with lesions and extensive atrophy and extracts the brai
 It can use a T1-weighted image or a combination of T1, T2 and Flair scans as input. 
 
 <p align="center">
-      <img src="docs/images/graph_abstract.png" alt="icv pop-up window"
-      width="600" height="200"/>
+      <img src="docs/images/icvmapper_process.png" alt="icv pop-up window"/>
 </p>
 
 
