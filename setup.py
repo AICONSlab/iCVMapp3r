@@ -38,7 +38,7 @@ setup(
     install_requires=[
         'nibabel', 'nipype', 'argparse', 'argcomplete', 'joblib', 'keras==2.1.2', 'nilearn', 'scikit-learn',
         'keras-contrib', 'pandas', 'numpy', 'plotly', 'PyQt5', 'termcolor'
-2   ],
+    ],
     extras_require={
         "icvmapper": ["tensorflow==1.3.0"],
         "icvmapper_gpu": ["tensorflow-gpu==1.3.0"],
