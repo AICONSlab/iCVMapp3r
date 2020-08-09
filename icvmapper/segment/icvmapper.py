@@ -11,8 +11,7 @@ import argcomplete
 import argparse
 import numpy as np
 import nibabel as nib
-from nilearn.image import reorder_img, resample_img, resample_to_img, largest_connected_component_img, smooth_img, \
-    math_img
+from nilearn.image import reorder_img, resample_img, resample_to_img, largest_connected_component_img, smooth_img, math_img
 from nipype.interfaces.c3 import C3d
 from icvmapper.utils import endstatement
 from icvmapper.deep.predict import run_test_case
@@ -128,7 +127,7 @@ def check_orient(in_img_file, r_orient, l_orient, out_img_file):
             orient_tag = 'RPI' if 'R' in img_ort else 'LPI'
         else:
             orient_tag = 'RPI' if 'R' in img_ort else 'LPI'
-        print(orient_tag)
+        print("re-orienting to %s ..." %orient_tag)
         orient_img(in_img_file, orient_tag, out_img_file)
         cp_orient = True
     return cp_orient
@@ -205,12 +204,26 @@ def main(args):
         hfb = os.path.realpath(__file__)
         hyper_dir = Path(hfb).parents[2]
 
-        if t1 and fl is None and t2 is None:
+        if fl is None and t2 is None:
             test_seqs = [t1]
             training_mods = ["t1"]
             model_name = 'hfb_t1only_mcdp'
             model_name_woc = 'hfb_t1'
             print("\n found only t1-w, using the %s model" % model_name)
+
+        elif t2 is None and fl:
+            test_seqs = [t1, fl]
+            training_mods = ["t1", "flair"]
+            model_name = 'hfb_t1fl_mcdp'
+            model_name_woc = 'hfb_t1fl'
+            print("\n found t1 and fl sequences, using the %s model" % model_name)
+
+        elif fl is None and t2:
+            test_seqs = [t1, t2]
+            training_mods = ["t1", "t2"]
+            model_name = 'hfb_t1t2_mcdp'
+            model_name_woc = 'hfb_t1t2'
+            print("\n found t1 and t2 sequences, using the %s model" % model_name)
 
         else:
             test_seqs = [t1, fl, t2]
@@ -231,13 +244,10 @@ def main(args):
         if not os.path.exists(pred_dir):
             os.mkdir(pred_dir)
 
-        # pred_dir_mcdp = "%s/pred_process_mcdp" % os.path.abspath(subj_dir)
-        # if not os.path.exists(pred_dir_mcdp):
-        #     os.mkdir(pred_dir_mcdp)
-
         #############
+        # bias correction if requested
         if bias is True:
-            t1_bias = os.path.join(subj_dir, "%s_nu.nii.gz" % os.path.basename(t1).split('.')[0])
+            t1_bias = os.path.join(subj_dir, "%s_T1_nu.nii.gz" % subj)
             biascorr.main(["-i", "%s" % t1, "-o", "%s" % t1_bias])
             in_ort = t1_bias
         else:
@@ -265,13 +275,25 @@ def main(args):
 
             seq_ort = "%s/%s_std_orient.nii.gz" % (subj_dir, os.path.basename(seq).split('.')[0])
             if training_mods[s] != 't1':
+                if training_mods[s] == 'flair':
+                    seq_bias = os.path.join(subj_dir, "%s_T1acq_nu_FL.nii.gz" % subj)
+                else:
+                    seq_bias = os.path.join(subj_dir, "%s_T1acq_nu_T2.nii.gz" % subj)
+
+                # bias correction if requested
+                if bias is True:
+                    biascorr.main(["-i", "%s" % seq, "-o", "%s" % seq_bias])
+                seq = seq_bias if os.path.exists(seq_bias) else seq
+
                 # check orientation
                 if ign_ort is False:
-                    cp_orient = check_orient(seq, r_orient, l_orient, seq_ort)
+                    cp_orient_seq = check_orient(seq, r_orient, l_orient, seq_ort)
+
             in_seq = seq_ort if os.path.exists(seq_ort) else seq
 
             image = nib.load(in_seq)
             img = image.get_data()
+
             # standardize intensity for data
             print("\n standardizing ...")
             std_img = (img - img.mean()) / img.std()
@@ -314,7 +336,6 @@ def main(args):
             pred = run_test_case(test_data=test_data, model_json=model_json, model_weights=model_weights,
                                  affine=res.affine, output_label_map=True, labels=1)
             pred_s[sample_id, :, :, :] = pred.get_data()
-            #nib.save(pred, os.path.join(pred_dir_mcdp, "hfb_pred_%s.nii.gz" % sample_id))
 
         # computing mean
         pred_mean = pred_s.mean(axis=0)
@@ -328,7 +349,7 @@ def main(args):
         nib.save(pred_th, pred_th_name)
 
         # resample back
-        pred_res = resample_to_img(pred_prob, t1_img, interpolation="linear")
+        pred_res = resample_to_img(pred_prob, t1_img)
         pred_prob_name = os.path.join(pred_dir, "%s_%s_pred_prob.nii.gz" % (subj, model_name))
         nib.save(pred_res, pred_prob_name)
 
@@ -345,7 +366,7 @@ def main(args):
             nib.save(pred_comp, prediction_std_orient)
             fill_holes(prediction_std_orient, prediction_std_orient)
 
-            copy_orient(pred_name, t1, prediction)
+            copy_orient(pred_name, in_ort, prediction)
             fill_holes(prediction, prediction)
 
         else:
@@ -355,7 +376,7 @@ def main(args):
         # mask
         t1_masked_name = '%s/%s_T1_nu_masked.nii.gz' % (subj_dir, subj) \
             if bias is True else '%s/%s_masked.nii.gz' % (subj_dir, os.path.basename(t1).split('.')[0])
-        masked_t1 = math_img("img1 * img2", img1=nib.load(t1), img2=nib.load(prediction))
+        masked_t1 = math_img("img1 * img2", img1=nib.load(in_ort), img2=nib.load(prediction))
         nib.save(masked_t1, t1_masked_name)
 
         if ign_ort is False and cp_orient:
@@ -365,7 +386,7 @@ def main(args):
             nib.save(masked_t1_std, t1_masked_name_std)
 
         # predict cerebellum
-        if woc == 1:
+        if woc == 1 and model_name_woc == 'hfb':
             print("\n predicting approximate cerebellar mask")
 
             cereb_prediction = '%s/%s_T1acq_nu_cerebellum_pred.nii.gz' % (subj_dir, subj) \
@@ -385,7 +406,7 @@ def main(args):
             nib.save(cereb_th, cereb_prediction)
 
             # remove cerebellum
-            woc_img = pred_th.get_data() - cereb_th.get_data()
+            woc_img = pred_comp.get_data() - cereb_th.get_data()
             woc_nii = nib.Nifti1Image(woc_img, t1_img.affine)
             # conn comp
             woc_th = math_img('img > 0', img=woc_nii)
@@ -397,16 +418,22 @@ def main(args):
                 if bias is True else '%s/%s_T1acq_HfB_woc_pred.nii.gz' % (subj_dir, subj)
             woc_pred_std_orient = '%s/%s_T1acq_nu_HfB_woc_pred_std_orient.nii.gz' % (subj_dir, subj)
 
+
             if ign_ort is False and cp_orient:
-                copy_orient(woc_name, t1, woc_pred)
                 nib.save(woc_comp, woc_pred_std_orient)
+                fill_holes(woc_pred_std_orient, woc_pred_std_orient)
+
+                copy_orient(woc_name, in_ort, woc_pred)
+                fill_holes(woc_pred, woc_pred)
+
             else:
                 nib.save(woc_comp, woc_pred)
+                fill_holes(woc_pred, woc_pred)
 
             # mask
             t1_woc_name = '%s/%s_T1_nu_masked_woc.nii.gz' % (subj_dir, subj) \
                 if bias is True else '%s/%s_masked_woc.nii.gz' % (subj_dir, os.path.basename(t1).split('.')[0])
-            woc_t1 = math_img("img1 * img2", img1=nib.load(t1), img2=nib.load(woc_pred))
+            woc_t1 = math_img("img1 * img2", img1=nib.load(in_ort), img2=nib.load(woc_pred))
             nib.save(woc_t1, t1_woc_name)
 
             if ign_ort is False and cp_orient:
@@ -414,14 +441,14 @@ def main(args):
                     if bias is True else '%s/%s_masked_woc_std_orient.nii.gz' % (subj_dir, os.path.basename(t1).split('.')[0])
                 woc_t1 = math_img("img1 * img2", img1=t1_img, img2=nib.load(woc_pred_std_orient))
                 nib.save(woc_t1, t1_woc_name)
-
+        else:
+            print('Removing cerebellum is available only when all 3 sequence t1, flair, and t2 have existed.')
 
         print("\n generating mosaic image for qc")
 
         seg_qc.main(["-i", "%s" % t1, "-s", "%s" % prediction, "-g", "5", "-m", "75"])
 
         endstatement.main('Brain extraction and mosaic generation', '%s' % (datetime.now() - start_time))
-
 
 if __name__ == "__main__":
     main(sys.argv[1:])

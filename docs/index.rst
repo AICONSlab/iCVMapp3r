@@ -9,9 +9,9 @@ Welcome to iCVMapp3r's documentation!
 *iCVMapp3r* (pronounced icvmapper) is a CNN-based segmentation technique of the intracranial volume (ICV)
 using MRI images from BrainLab.
 It can deal with brains with extensive atrophy and segments the ICV in seconds.
-It uses a T1-weighted image as the only input and segments both with-skull and skull-stripped images.
+It can segment the ICV with either T1-weighted image as the only input, or with different combinations involving a T1, T2, and FLAIR image.
 
-.. image:: images/graph_abstract.png
+.. image:: images/icvmapper_process.png
     :width: 550px
     :alt: Graph abstract
     :align: center
