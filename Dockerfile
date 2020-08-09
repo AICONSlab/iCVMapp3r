@@ -45,10 +45,6 @@ RUN mkdir -p /opt/ANTs && \
 ENV PATH=${ANTSPATH}:${PATH}
 
 # Install all needed packages based on pip installation
-# RUN git clone https://github.com/mgoubran/iCVMapp3r.git && \
-#     cd iCVMapp3r && \
-#     pip install git+https://www.github.com/keras-team/keras-contrib.git && \
-#     pip install -e .[icvmapper]
 COPY requirements.txt ./
 RUN python3 -m pip install --no-cache-dir -r requirements.txt
 COPY . .
