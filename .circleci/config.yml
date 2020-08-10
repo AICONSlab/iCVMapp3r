@@ -39,7 +39,7 @@ jobs:
           command: |
 
              echo "Runing tests:"
-             docker run --entrypoint bash -it mgoubran/icvmapper -c "icvmapper seg_icv -t1 /iCVMapp3r/data/test_case/mprage.nii.gz"
+             docker run --entrypoint bash -it mgoubran/icvmapper -c "icvmapper seg_icv -t1 /src/icvmapp3r/data/test_case/mprage.nii.gz -n 2"
 
       - store_test_results:
           path: /home/circleci/out/tests

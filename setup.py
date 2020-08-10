@@ -11,7 +11,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     license='GNU GENERAL PUBLIC LICENSE v3',
-    url='https://github.com/mgoubran/iCVMapp3r',  # change later
+    url='https://icvmapp3r.readthedocs.io/',  # change later
     download_url='https://github.com/mgoubran/iCVMapp3r',
     long_description=open('README.md').read(),
     classifiers=[
@@ -36,12 +36,12 @@ setup(
         'git+https://github.com/keras-team/keras-contrib.git'
     ],
     install_requires=[
-        'nibabel', 'nipype', 'argparse', 'argcomplete', 'joblib', 'keras==2.2.4', 'nilearn', 'scikit-learn',
+        'nibabel', 'nipype', 'argparse', 'argcomplete', 'joblib', 'keras==2.1.2', 'nilearn', 'scikit-learn',
         'keras-contrib', 'pandas', 'numpy', 'plotly', 'PyQt5', 'termcolor'
     ],
     extras_require={
-        "icvmapper": ["tensorflow==1.4.0"],
-        "icvmapper_gpu": ["tensorflow-gpu==1.4.0"],
+        "icvmapper": ["tensorflow==1.3.0"],
+        "icvmapper_gpu": ["tensorflow-gpu==1.3.0"],
     },
     entry_points={'console_scripts': ['icvmapper=icvmapper.cli:main']},
     keywords=[
