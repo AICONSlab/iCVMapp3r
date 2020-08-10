@@ -11,7 +11,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     license='GNU GENERAL PUBLIC LICENSE v3',
-    url='https://github.com/mgoubran/iCVMapp3r',  # change later
+    url='https://icvmapp3r.readthedocs.io/',  # change later
     download_url='https://github.com/mgoubran/iCVMapp3r',
     long_description=open('README.md').read(),
     classifiers=[
