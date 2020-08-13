@@ -36,12 +36,12 @@ setup(
         'git+https://github.com/keras-team/keras-contrib.git'
     ],
     install_requires=[
-        'nibabel', 'nipype', 'argparse', 'argcomplete', 'joblib', 'keras==2.1.2', 'nilearn', 'scikit-learn',
+        'nibabel', 'nipype', 'argparse', 'argcomplete', 'joblib', 'keras', 'nilearn', 'scikit-learn',
         'keras-contrib', 'pandas', 'numpy', 'plotly', 'PyQt5', 'termcolor'
     ],
     extras_require={
-        "icvmapper": ["tensorflow==1.3.0"],
-        "icvmapper_gpu": ["tensorflow-gpu==1.3.0"],
+        "icvmapper": ["tensorflow"],
+        "icvmapper_gpu": ["tensorflow-gpu"],
     },
     entry_points={'console_scripts': ['icvmapper=icvmapper.cli:main']},
     keywords=[
