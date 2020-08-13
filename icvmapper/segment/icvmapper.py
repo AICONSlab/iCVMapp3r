@@ -150,8 +150,6 @@ def cutoff_img(in_file, cutoff_percents, out_file):
     data = img.get_data()
     cutoff_low = np.percentile(data, cutoff_percents)
     cutoff_high = np.percentile(data, 100-cutoff_percents)
-    print(cutoff_low)
-    print(cutoff_high)
     new_data = data.copy()
     new_data[new_data > cutoff_high] = cutoff_high
     new_data[new_data < cutoff_low] = cutoff_low
