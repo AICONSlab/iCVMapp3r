@@ -292,7 +292,6 @@ def main(args):
         t1_ort = "%s/%s_std_orient.nii.gz" % (subj_dir, os.path.basename(t1).split('.')[0])
         if ign_ort is False:
             cp_orient = check_orient(in_ort, r_orient, l_orient, t1_ort)
-        print(cp_orient)
 
         # loading t1
         in_t1 = t1_ort if os.path.exists(t1_ort) else in_ort
