@@ -14,10 +14,10 @@ import nibabel as nib
 from nilearn.image import reorder_img, resample_img, resample_to_img, largest_connected_component_img, smooth_img, \
     math_img
 from nipype.interfaces.c3 import C3d
-from icvmatter.utils import endstatement
-from icvmatter.deep.predict import run_test_case
-from icvmatter.preprocess import biascorr
-from icvmatter.qc import seg_qc
+from icvmapper.utils import endstatement
+from icvmapper.deep.predict import run_test_case
+from icvmapper.preprocess import biascorr
+from icvmapper.qc import seg_qc
 import subprocess
 import warnings
 from termcolor import colored
