@@ -252,7 +252,7 @@ def main(args):
             test_seqs = [t1, fl, t2]
             training_mods = ["t1", "flair", "t2"]
             model_name = 'hfb_multi_mcdp_contrast'
-            model_name_woc = 'hfb'
+            model_name_woc = 'hfb_t1flt2_mcdp_contrast'
             print("\n found all 3 sequences, using the full %s model" % model_name)
 
         model_json = '%s/models/%s_model.json' % (hyper_dir, model_name)
