@@ -210,6 +210,7 @@ def main(args):
     parser = parsefn()
     subj_dir, subj, t1, fl, t2, woc, out, bias, num_mc, thresh, ign_ort, force = parse_inputs(parser, args)
     cp_orient = False
+    rc_flag = False
 
     if out is None:
         prediction = '%s/%s_T1acq_nu_HfB_pred.nii.gz' % (subj_dir, subj) \
@@ -253,6 +254,7 @@ def main(args):
             training_mods = ["t1", "flair", "t2"]
             model_name = 'hfb_multi_mcdp_contrast'
             model_name_woc = 'hfb_t1flt2_mcdp_contrast'
+            rc_flag = True
             print("\n found all 3 sequences, using the full %s model" % model_name)
 
         model_json = '%s/models/%s_model.json' % (hyper_dir, model_name)
@@ -410,61 +412,63 @@ def main(args):
 
         # predict cerebellum
         if woc == 1:
-            print("\n predicting approximate cerebellar mask")
+            if rc_flag:
+                print("\n predicting approximate cerebellar mask")
 
-            cereb_prediction = '%s/%s_T1acq_nu_cerebellum_pred.nii.gz' % (subj_dir, subj) \
-                if bias is True else '%s/%s_T1acq_cerebellum_pred.nii.gz' % (subj_dir, subj)
-            model_json_woc = '%s/models/%s_model.json' % (hyper_dir, model_name_woc)
-            cereb_weights = '%s/models/cereb_model_weights.h5' % hyper_dir
+                cereb_prediction = '%s/%s_T1acq_nu_cerebellum_pred.nii.gz' % (subj_dir, subj) \
+                    if bias is True else '%s/%s_T1acq_cerebellum_pred.nii.gz' % (subj_dir, subj)
+                model_json_woc = '%s/models/%s_model.json' % (hyper_dir, model_name_woc)
+                cereb_weights = '%s/models/cereb_model_weights.h5' % hyper_dir
 
-            cereb_pred = run_test_case(test_data=test_data, model_json=model_json_woc, model_weights=cereb_weights,
+                cereb_pred = run_test_case(test_data=test_data, model_json=model_json_woc, model_weights=cereb_weights,
                                        affine=res.affine, output_label_map=True, labels=1)
 
-            # resample back
-            cereb_pred_res = resample_to_img(cereb_pred, t1_img)
-            cereb_pred_name = os.path.join("%s/%s_hfb_cereb_pred_prob.nii.gz" % (pred_dir, subj))
-            nib.save(cereb_pred_res, cereb_pred_name)
-            cereb_sm = smooth_img(cereb_pred_res, fwhm=2)
-            cereb_th = math_img('img > 0.25', img=cereb_sm)
-            nib.save(cereb_th, cereb_prediction)
+                # resample back
+                cereb_pred_res = resample_to_img(cereb_pred, t1_img)
+                cereb_pred_name = os.path.join("%s/%s_hfb_cereb_pred_prob.nii.gz" % (pred_dir, subj))
+                nib.save(cereb_pred_res, cereb_pred_name)
+                cereb_sm = smooth_img(cereb_pred_res, fwhm=2)
+                cereb_th = math_img('img > 0.25', img=cereb_sm)
+                nib.save(cereb_th, cereb_prediction)
 
-            # remove cerebellum
-            woc_img = pred_comp.get_data() - cereb_th.get_data()
-            woc_nii = nib.Nifti1Image(woc_img, t1_img.affine)
-            # conn comp
-            woc_th = math_img('img > 0', img=woc_nii)
-            woc_comp = largest_connected_component_img(woc_th)
-            woc_name = os.path.join(pred_dir, "%s_%s_woc_pred.nii.gz" % (subj, model_name))
-            nib.save(woc_comp, woc_name)
+                # remove cerebellum
+                woc_img = pred_comp.get_data() - cereb_th.get_data()
+                woc_nii = nib.Nifti1Image(woc_img, t1_img.affine)
+                # conn comp
+                woc_th = math_img('img > 0', img=woc_nii)
+                woc_comp = largest_connected_component_img(woc_th)
+                woc_name = os.path.join(pred_dir, "%s_%s_woc_pred.nii.gz" % (subj, model_name))
+                nib.save(woc_comp, woc_name)
 
-            woc_pred = '%s/%s_T1acq_nu_HfB_woc_pred.nii.gz' % (subj_dir, subj) \
-                if bias is True else '%s/%s_T1acq_HfB_woc_pred.nii.gz' % (subj_dir, subj)
-            woc_pred_std_orient = '%s/%s_T1acq_nu_HfB_woc_pred_std_orient.nii.gz' % (subj_dir, subj)
+                woc_pred = '%s/%s_T1acq_nu_HfB_woc_pred.nii.gz' % (subj_dir, subj) \
+                    if bias is True else '%s/%s_T1acq_HfB_woc_pred.nii.gz' % (subj_dir, subj)
+                woc_pred_std_orient = '%s/%s_T1acq_nu_HfB_woc_pred_std_orient.nii.gz' % (subj_dir, subj)
 
 
-            if ign_ort is False and cp_orient:
-                nib.save(woc_comp, woc_pred_std_orient)
-                fill_holes(woc_pred_std_orient, woc_pred_std_orient)
+                if ign_ort is False and cp_orient:
+                    nib.save(woc_comp, woc_pred_std_orient)
+                    fill_holes(woc_pred_std_orient, woc_pred_std_orient)
 
-                copy_orient(woc_name, in_ort, woc_pred)
-                fill_holes(woc_pred, woc_pred)
+                    copy_orient(woc_name, in_ort, woc_pred)
+                    fill_holes(woc_pred, woc_pred)
 
-            else:
-                nib.save(woc_comp, woc_pred)
-                fill_holes(woc_pred, woc_pred)
+                else:
+                    nib.save(woc_comp, woc_pred)
+                    fill_holes(woc_pred, woc_pred)
 
-            # mask
-            t1_woc_name = '%s/%s_T1_nu_masked_woc.nii.gz' % (subj_dir, subj) \
-                if bias is True else '%s/%s_masked_woc.nii.gz' % (subj_dir, os.path.basename(t1).split('.')[0])
-            woc_t1 = math_img("img1 * img2", img1=nib.load(in_ort), img2=nib.load(woc_pred))
-            nib.save(woc_t1, t1_woc_name)
-
-            if ign_ort is False and cp_orient:
-                t1_woc_name = '%s/%s_T1_nu_masked_woc_std_orient.nii.gz' % (subj_dir, subj) \
-                    if bias is True else '%s/%s_masked_woc_std_orient.nii.gz' % (subj_dir, os.path.basename(t1).split('.')[0])
-                woc_t1 = math_img("img1 * img2", img1=t1_img, img2=nib.load(woc_pred_std_orient))
+                # mask
+                t1_woc_name = '%s/%s_T1_nu_masked_woc.nii.gz' % (subj_dir, subj) \
+                    if bias is True else '%s/%s_masked_woc.nii.gz' % (subj_dir, os.path.basename(t1).split('.')[0])
+                woc_t1 = math_img("img1 * img2", img1=nib.load(in_ort), img2=nib.load(woc_pred))
                 nib.save(woc_t1, t1_woc_name)
 
+                if ign_ort is False and cp_orient:
+                    t1_woc_name = '%s/%s_T1_nu_masked_woc_std_orient.nii.gz' % (subj_dir, subj) \
+                        if bias is True else '%s/%s_masked_woc_std_orient.nii.gz' % (subj_dir, os.path.basename(t1).split('.')[0])
+                    woc_t1 = math_img("img1 * img2", img1=t1_img, img2=nib.load(woc_pred_std_orient))
+                    nib.save(woc_t1, t1_woc_name)
+            else:
+                print("\n removing cerebellum feature is functional when all three T1w, Flair and T2w are available.")
         print("\n generating mosaic image for qc")
 
         seg_qc.main(["-i", "%s" % t1, "-s", "%s" % prediction, "-g", "5", "-m", "75"])
