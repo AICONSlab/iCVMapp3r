@@ -8,7 +8,7 @@ For the main required Python packages (numpy, scipy, etc.) we recommend using
 
 1. Clone repository
 
-        git clone https://github.com/mgoubran/iCVMapp3r.git iCVMapp3r
+        git clone https://github.com/AICONSlab/iCVMapp3r.git iCVMapp3r
 
         (or install zip file and uncompress)
 
