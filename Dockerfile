@@ -46,6 +46,14 @@ COPY . .
 
 # Download models, store in directory
 RUN mkdir -p /src/icvmapp3r/models && \
+    wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1XJqs_kagiXQPxm_kbUiCMayputKKDP99' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1XJqs_kagiXQPxm_kbUiCMayputKKDP99" -O /src/icvmapp3r/models/hfb_t1only_mcdp_224iso_multi_model_weights.h5 && \
+    rm -rf /tmp/cookies.txt && \
+    wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1vygaxGmdN-FY3IDCKv_IugDSTSc-bupk' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1vygaxGmdN-FY3IDCKv_IugDSTSc-bupk" -O /src/icvmapp3r/models/hfb_t1only_mcdp_224iso_multi_model.json && \
+    rm -rf /tmp/cookies.txt && \
+    wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1kgWMeTqpSlhTLIqBqpkhES1593Mb689x' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1kgWMeTqpSlhTLIqBqpkhES1593Mb689x" -O /src/icvmapp3r/models/hfb_t1only_mcdp_224iso_contrast_model_weights.h5 && \
+    rm -rf /tmp/cookies.txt && \
+    wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1dT6CKEgR0a18VQO9HIKixJcVu8jnFA1I' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1dT6CKEgR0a18VQO9HIKixJcVu8jnFA1I" -O /src/icvmapp3r/models/hfb_t1only_mcdp_224iso_contrast_model.json && \
+    rm -rf /tmp/cookies.txt && \
     wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1trZghBXf2Hsbd_AW_9eJ2mpeYGP3gx0k' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1trZghBXf2Hsbd_AW_9eJ2mpeYGP3gx0k" -O /src/icvmapp3r/models/hfb_t1fl_mcdp_multi_model_weights.h5 && \
     rm -rf /tmp/cookies.txt && \
     wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1VODDQlLRL-uDiYrvRLmKKaLaChNGrhYv' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1VODDQlLRL-uDiYrvRLmKKaLaChNGrhYv" -O /src/icvmapp3r/models/hfb_t1fl_mcdp_multi_model.json && \

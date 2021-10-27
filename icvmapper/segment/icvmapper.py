@@ -228,10 +228,13 @@ def main(args):
         hfb = os.path.realpath(__file__)
         hyper_dir = Path(hfb).parents[2]
 
+        pred_shape = [160, 160, 160]
+
         if fl is None and t2 is None:
+            pred_shape = [224, 224, 224]
             test_seqs = [t1]
             training_mods = ["t1"]
-            model_name = 'hfb_t1only_mcdp_multi'
+            model_name = 'hfb_t1only_mcdp_224iso_contrast'
             model_name_woc = 'hfb_t1'
             print("\n found only t1-w, using the %s model" % model_name)
 
@@ -299,7 +302,7 @@ def main(args):
 
         ###########
         c3 = C3d()
-        pred_shape = [160, 160, 160]
+
         test_data = np.zeros((1, len(training_mods), pred_shape[0], pred_shape[1], pred_shape[2]), dtype=t1_img.get_data_dtype())
 
         for s, seq in enumerate(test_seqs):
