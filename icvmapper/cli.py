@@ -14,7 +14,7 @@ from icvmapper import gui
 from icvmapper.segment import icvmapper
 from icvmapper.convert import filetype
 from icvmapper.preprocess import biascorr, trim_like
-from icvmapper.qc import seg_qc
+from icvmapper.qc import seg_qc, reg_svg
 from icvmapper.stats import summary_icv_vols
 from icvmapper.utils.depends_manager import add_paths
 
@@ -44,6 +44,8 @@ def run_icv_seg_summary(args):
 def run_seg_qc(args):
     seg_qc.main(args)
 
+def run_reg_svg(args):
+    reg_svg.main(args)
 
 def run_utils_biascorr(args):
     biascorr.main(args)
