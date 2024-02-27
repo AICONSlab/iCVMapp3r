@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y git wget build-essential g++ gcc cmake 
     ln -s /usr/bin/python3 python && \
     pip3 install --upgrade pip==20.3.4 && \
     cd ~
-
+    
 # Install c3d
 RUN wget https://downloads.sourceforge.net/project/c3d/c3d/Nightly/c3d-nightly-Linux-x86_64.tar.gz && \
     tar -xzvf c3d-nightly-Linux-x86_64.tar.gz && mv c3d-1.1.0-Linux-x86_64 /opt/c3d && \
@@ -45,6 +45,7 @@ RUN python3 -m pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Download models, store in directory
+
 RUN mkdir -p /src/icvmapp3r/models && \
     wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1XJqs_kagiXQPxm_kbUiCMayputKKDP99' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1XJqs_kagiXQPxm_kbUiCMayputKKDP99" -O /src/icvmapp3r/models/hfb_t1only_mcdp_224iso_multi_model_weights.h5 && \
     rm -rf /tmp/cookies.txt && \
@@ -70,6 +71,28 @@ RUN mkdir -p /src/icvmapp3r/models && \
     rm -rf /tmp/cookies.txt && \
     wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1wDFsMGxXZeqdrU3Ic2ITQztU772Vy8Hu' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1wDFsMGxXZeqdrU3Ic2ITQztU772Vy8Hu" -O /src/icvmapp3r/models/hfb_t1t2_mcdp_multi_model.json && \
     rm -rf /tmp/cookies.txt
+    
+RUN set -x \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        fsl-core \
+        '^libxcb.*-dev' \
+        libx11-xcb-dev \
+        libglu1-mesa-dev \
+        libxrender-dev \
+        libxi-dev \
+        libxkbcommon-dev \
+        libxkbcommon-x11-dev \
+        libxinerama-dev 
+
+
+
+# these break the build, not sure why/how to fix
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+ARG USER=jacqueline
+RUN addgroup --gid 1000 jacqueline
+RUN adduser --disabled-password --gecos '' --uid 1000 --gid 1000 jacqueline
 
 # Run icvmapper when the container launches
 ENTRYPOINT /bin/bash

@@ -2,24 +2,26 @@ import os
 import glob
 import argparse
 import argcomplete
+import sys
 
 import numpy as np
 import nibabel as nib
 import svgwrite
-from nilearn.plotting import plot_roi
 from nilearn.image import new_img_like
 from PIL import Image
+from PIL import ImageFont
+from PIL import ImageDraw 
+from nipype.interfaces.ants.visualization import CreateTiledMosaic
+from nipype.interfaces.ants.visualization import ConvertScalarImageToRGB
 
-ORIENTATION_DICT = {'L' : 'x',
-                    'R' : 'x',
-                    'P' : 'y',
-                    'A' : 'y',
-                    'S' : 'z',
-                    'I' : 'z',}
+
+ORIENTATION_DICT = {0 : 'x',
+                    1 : 'y',
+                    2 : 'z'}
 
 def parsefn():
-    parser = argparse.ArgumentParser(usage='%(prog)s -i [ img ] \n\n'
-                                           "Create tiled mosaic of segmentation overlaid on structural image")
+    parser = argparse.ArgumentParser(usage='%(prog)s -f fixed_file -r registered_file [-o output_file] [-s segmentation_file] [-sl slices] [-sc scale] [-c] [-cr min max] \n\n'
+                                           "Create svg to check the quality of registration between a fixed image and registered image")
 
     required = parser.add_argument_group('required arguments')
 
@@ -31,6 +33,12 @@ def parsefn():
     optional.add_argument('-s', '--seg', type=str, metavar='', help="segmentation mask")
     optional.add_argument('-sl', '--slices', type=int, metavar='', help="number of slices",
                           default=5)
+    optional.add_argument('-sc', '--scale', type=int, metavar='', help="scale of interval between slices",
+                          default=15)
+    optional.add_argument('-c', '--color', action='store_true', help="display registered image in color scale",
+                          default=False)
+    optional.add_argument('-cr', '--color_range', nargs=2, type=int, metavar=('min', 'max'), help="display registered image in colour scale within range min to max",
+                          default=(None, None))
     optional.add_argument('-o', '--out', type=str, metavar='', help="output image filename")
 
     return parser
@@ -44,6 +52,12 @@ def parse_inputs(parser, args):
     reg = args.reg
     seg = args.seg if args.seg else None
     slices = args.slices
+    scale = args.scale
+    color = args.color
+    minimum, maximum = args.color_range
+
+    if isinstance(minimum, int) and isinstance(maximum, int) and not(color):
+        color = True
 
     out_dir = None
     out_file = None
@@ -56,13 +70,63 @@ def parse_inputs(parser, args):
     
     prefix = os.path.splitext(os.path.basename(out_file))[0]
 
-    return fixed, reg, seg, slices, out_dir, out_file, prefix
+    return fixed, reg, seg, slices, scale, color, minimum, maximum, out_dir, out_file, prefix
 
 
 def get_orient(image):
     return nib.aff2axcodes(image.affine)
 
-def generate_pngs(fixed_file, reg_file, prefix, seg_file=None, output_dir=None, slices=5):
+def generate_tile_image(input_img, output_img, axis, slices, image_type, seg_img, color_scale, preprocdir):
+    ''' Given dimension, slice indices of image, extract slices at filename and save them to filename
+    '''
+
+    img = nib.load(input_img)
+
+    slice_count = img.shape[axis]
+    slices_shifted = (np.array(slices) + (slice_count // 2))
+    slices_shifted = [str(i) for i in slices_shifted]
+
+    width_padding = str((max(img.shape) - img.shape[axis - 2]) // 2)
+    height_padding = str(((max(img.shape) - img.shape[axis - 1]) // 2) + 10)
+
+    # generate image with specific slices
+    mosaic_slicer = CreateTiledMosaic()
+    mosaic_slicer.inputs.input_image = input_img
+    mosaic_slicer.inputs.output_image = output_img
+    mosaic_slicer.inputs.slices = "x".join(slices_shifted)
+    mosaic_slicer.inputs.tile_geometry = "1x"+str(len(slices_shifted))
+    mosaic_slicer.inputs.direction = axis
+    mosaic_slicer.inputs.pad_or_crop = '[ '+width_padding+'x '+height_padding+' , '+width_padding+'x '+height_padding+' ,0]'
+    mosaic_slicer.inputs.flip_slice = "0x1"
+
+    # apply color scale to registered image
+    if image_type == 'reg' and color_scale:
+        mosaic_slicer.inputs.alpha_value = 1
+        mosaic_slicer.inputs.rgb_image = os.path.join(preprocdir, image_type+'_rgb.nii.gz')
+
+    else:
+        mosaic_slicer.inputs.alpha_value = 0
+        mosaic_slicer.inputs.rgb_image = input_img
+
+    mosaic_slicer.run()
+
+    # draw left, right, slice number
+    tiled_image = Image.open(output_img)
+    draw = ImageDraw.Draw(tiled_image)
+    offset = tiled_image.width // len(slices)
+
+    for i in range(len(slices)):
+        draw.text((5 + i*offset, tiled_image.height - 20),ORIENTATION_DICT[axis]+"="+str(slices[i]),(255,255,255))
+
+        if ORIENTATION_DICT[axis] != "x":
+            draw.text((20 + i*offset, 20),"L",(255,255,255))
+            draw.text(((i+1)*offset - 25, 20),"R",(255,255,255))
+
+    tiled_image.save(output_img)
+
+
+def generate_pngs(fixed_file, reg_file, prefix, seg_file, color_scale, minimum, maximum, output_dir=None, slices=5, scale=15):
+    
     fixed_img = nib.load(fixed_file)
     reg_img = nib.load(reg_file)
     seg_img = nib.load(seg_file) if seg_file else None
@@ -77,33 +141,62 @@ def generate_pngs(fixed_file, reg_file, prefix, seg_file=None, output_dir=None, 
     if seg_img and get_orient(seg_img) != get_orient(reg_img):
         raise Exception("The segmentation mask's orientation is different than the others")
 
+    if slices*scale >= min(fixed_img.shape):
+        raise Exception("The slice and/or scale inputs are too large, exceed the dimensions of the registration and fixed images")
+
     # generate blank image
-    if seg_file:
-        mask_img = seg_file
-    else:
-        mask_img = new_img_like(fixed_img, np.zeros(fixed_img.shape))
+    if not(seg_file):
+        seg_file = new_img_like(fixed_img, np.zeros(fixed_img.shape))
 
     # create output dir for intermediate images
     preprocdir = os.path.join(output_dir, 'svg_process')
     os.makedirs(preprocdir, exist_ok=True)
 
+    # reorient images to canonical orientation
+    canonical_fixed = nib.as_closest_canonical(fixed_img)
+    nib.save(canonical_fixed, os.path.join(preprocdir, 'fixed_canonical.nii.gz'))
+
+    canonical_reg = nib.as_closest_canonical(reg_img)
+    nib.save(canonical_reg, os.path.join(preprocdir, 'reg_canonical.nii.gz'))  
+
     # set slice indices
-    slice_pos = [-30, -15, 0, 15, 30]
+    center = [int(dim / 2) for dim in fixed_img.shape]
+
+    min_slice = (slices // 2) * -scale
+    slice_pos = [min_slice + (i*scale) for i in range(slices)]
 
     # generate 6 images
-    for img_type, img in [('fixed', fixed_img), ('reg', reg_img)]:
-        for direction in get_orient(fixed_img):
-            axis = ORIENTATION_DICT[direction]
+    for img_type, img in [('fixed', preprocdir+'/fixed_canonical.nii.gz'), ('reg', preprocdir+'/reg_canonical.nii.gz')]:
+
+        # make RGB
+        if color_scale and img_type == 'reg':
+            if minimum == None and maximum == None:
+                command = 'ConvertScalarImageToRGB 3 '+img+' '+preprocdir+'/'+img_type+'_rgb.nii.gz none hot'
+                os.system(command)
+            else:
+                converter = ConvertScalarImageToRGB()
+                converter.inputs.dimension = 3
+                converter.inputs.input_image = img
+                converter.inputs.output_image = os.path.join(preprocdir, img_type+'_rgb.nii.gz')
+                converter.inputs.colormap = 'hot'
+                converter.inputs.minimum_input = int(minimum)
+                converter.inputs.maximum_input = int(maximum)
+                converter.run()
+
+        for axis in range(0, 3):
             
-            #output
+            # output
             if output_dir is None:
                 output_dir = os.getcwd()
             
             output_file = os.path.join(preprocdir, "{}_{}_{}.png".format(prefix, img_type, axis))
 
-            title = img_type.capitalize() if axis == 'x' else None
+            generate_tile_image(img, output_file, axis, slice_pos, img_type, seg_file, color_scale, preprocdir)
 
-            plot_roi(mask_img, img, display_mode=axis, cut_coords=(-30, -15, 0, 15, 30), title=title, output_file=output_file)
+        os.remove(img)
+
+        if color_scale and img_type == 'reg':
+            os.remove(preprocdir+'/'+img_type+'_rgb.nii.gz')
 
 
 def combine_png(out_dir, prefix):
@@ -125,25 +218,32 @@ def combine_png(out_dir, prefix):
     reg_pngs = [Image.open(x) for x in reg_images]
 
     width = fixed_pngs[0].width
-    height = sum([svg.height for svg in fixed_pngs])
+    max_height = max([x.height for x in fixed_pngs])
+    height = max_height*len(fixed_pngs)
+
 
     # create larger fixed and reg images before saving
     fixed_image = Image.new('RGB', (width, height))
+
+    draw = ImageDraw.Draw(fixed_image)
+
     for i, png in enumerate(fixed_pngs):
-        fixed_image.paste(png, (0, i * png.height))
+        offset = (max_height - png.height) // 2
+        fixed_image.paste(png, (0, (i*max_height)+offset))
+
+    draw.text((5, 5),"Fixed",(255,255,255))
     fixed_image.save(os.path.join(out_dir, 'svg_process', '{}_combined_fixed_image.png'.format(prefix)))
 
     reg_image = Image.new('RGB', (width, height))
+
+    draw = ImageDraw.Draw(reg_image)
+
     for j, png in enumerate(reg_pngs):
-        reg_image.paste(png, (0, j * png.height))
+        offset = (max_height - png.height) // 2
+        reg_image.paste(png, (0, (j*max_height)+offset))
+
+    draw.text((5, 5),"Reg",(255,255,255))
     reg_image.save(os.path.join(out_dir, 'svg_process', '{}_combined_reg_image.png'.format(prefix)))
-
-    # remove intermediate images
-    for image in fixed_images:
-        os.remove(image)
-    for image in reg_images:
-        os.remove(image)
-
 
 def compile_svg(out_dir, out_file, prefix):
     """
@@ -162,7 +262,10 @@ def compile_svg(out_dir, out_file, prefix):
     fixed_relpath = os.path.relpath(fixed_png, out_dir)
     reg_relpath = os.path.relpath(reg_png, out_dir)
 
-    dwg = svgwrite.Drawing(out_file)
+    fixed = Image.open(fixed_png)
+    size = (fixed.width, fixed.height)
+
+    dwg = svgwrite.Drawing(out_file, size)
     background = dwg.add(svgwrite.image.Image(reg_relpath))
     foreground = dwg.add(svgwrite.image.Image(fixed_relpath))
     
@@ -173,8 +276,11 @@ def compile_svg(out_dir, out_file, prefix):
 
 def main(args):
     parser = parsefn()
-    fixed, reg, seg, slices, out_dir, out_file, prefix = parse_inputs(parser, args)
+    fixed, reg, seg, slices, scale, color, minimum, maximum, out_dir, out_file, prefix = parse_inputs(parser, args)
 
-    generate_pngs(fixed, reg, prefix, seg, out_dir, slices)
+    generate_pngs(fixed, reg, prefix, seg, color, minimum, maximum, out_dir, slices, scale)
     combine_png(out_dir, prefix)
     compile_svg(out_dir, out_file, prefix)
+
+if __name__ == "__main__":
+    main(sys.argv[1:])

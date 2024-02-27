@@ -80,6 +80,13 @@ def get_parser():
     parser_seg_qc.set_defaults(func=run_seg_qc)
 
     # --------------
+    
+    # reg_svg
+    reg__svg_parser = reg_svg.parsefn()
+    parser_reg_svg = subparsers.add_parser('reg_svg', add_help=False, parents=[reg_svg_parser], usage=reg_svg_parser.usage)
+    parser_reg_svg.set_defaults(func=run_reg_svg)
+
+    # --------------
 
     # utils biascorr
     biascorr_parser = biascorr.parsefn()
