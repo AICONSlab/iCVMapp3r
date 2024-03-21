@@ -156,9 +156,9 @@ def main(args=None):
             elif hasattr(args, 't1w'):
                 if args.t1w:
                     log_filepath = os.path.join(os.path.dirname(args.t1w), 'logs', '{}.log'.format(log_filename))
-						else:
-							print("Error, must provide T1")
-							exit(0)
+	    else:
+		print("Error, must provide T1")
+		exit(0)
         else:
             log_filepath = os.path.join(os.getcwd(), '{}.log'.format(log_filename))
 
