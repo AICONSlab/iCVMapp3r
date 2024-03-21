@@ -17,7 +17,7 @@ from nipype.interfaces.c3 import C3d
 from icvmapper.utils import endstatement
 from icvmapper.deep.predict import run_test_case
 from icvmapper.preprocess import biascorr
-from icvmapper.qc import seg_qc
+from icvmapper.qc import seg_qc, reg_svg
 import subprocess
 import warnings
 from termcolor import colored

@@ -14,7 +14,7 @@ from icvmapper import gui
 from icvmapper.segment import icvmapper
 from icvmapper.convert import filetype
 from icvmapper.preprocess import biascorr, trim_like
-from icvmapper.qc import seg_qc
+from icvmapper.qc import seg_qc, reg_svg
 from icvmapper.stats import summary_icv_vols
 from icvmapper.utils.depends_manager import add_paths
 
@@ -44,6 +44,8 @@ def run_icv_seg_summary(args):
 def run_seg_qc(args):
     seg_qc.main(args)
 
+def run_reg_svg(args):
+    reg_svg.main(args)
 
 def run_utils_biascorr(args):
     biascorr.main(args)
@@ -76,6 +78,13 @@ def get_parser():
                                           help="Create tiled mosaic of segmentation overlaid on structural image",
                                           usage=seg_qc_parser.usage)
     parser_seg_qc.set_defaults(func=run_seg_qc)
+
+    # --------------
+    
+    # reg_svg
+    reg_svg_parser = reg_svg.parsefn()
+    parser_reg_svg = subparsers.add_parser('reg_svg', add_help=False, parents=[reg_svg_parser], usage=reg_svg_parser.usage)
+    parser_reg_svg.set_defaults(func=run_reg_svg)
 
     # --------------
 
@@ -147,7 +156,9 @@ def main(args=None):
             elif hasattr(args, 't1w'):
                 if args.t1w:
                     log_filepath = os.path.join(os.path.dirname(args.t1w), 'logs', '{}.log'.format(log_filename))
-
+            else:
+                print("Error, must provide T1")
+                exit(0)
         else:
             log_filepath = os.path.join(os.getcwd(), '{}.log'.format(log_filename))
 
