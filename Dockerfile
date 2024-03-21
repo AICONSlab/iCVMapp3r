@@ -42,7 +42,7 @@ ENV PATH=${ANTSPATH}:${PATH}
 # Install all needed packages based on pip installation
 COPY requirements.txt ./
 RUN python3 -m pip install --no-cache-dir -r requirements.txt
-COPY . .
+#COPY . .
 
 # Download models, store in directory
 
@@ -84,15 +84,6 @@ RUN set -x \
         libxkbcommon-dev \
         libxkbcommon-x11-dev \
         libxinerama-dev 
-
-
-
-# these break the build, not sure why/how to fix
-ARG USER_ID=1000
-ARG GROUP_ID=1000
-ARG USER=jacqueline
-RUN addgroup --gid 1000 jacqueline
-RUN adduser --disabled-password --gecos '' --uid 1000 --gid 1000 jacqueline
 
 # Run icvmapper when the container launches
 ENTRYPOINT /bin/bash
