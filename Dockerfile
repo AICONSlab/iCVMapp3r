@@ -59,9 +59,9 @@ RUN mkdir -p /src/icvmapp3r/models && \
     rm -rf /tmp/cookies.txt && \
     wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1VODDQlLRL-uDiYrvRLmKKaLaChNGrhYv' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1VODDQlLRL-uDiYrvRLmKKaLaChNGrhYv" -O /src/icvmapp3r/models/hfb_t1fl_mcdp_multi_model.json && \
     rm -rf /tmp/cookies.txt && \
-    wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1haiul6JK6m4Z7qmTb1FZf4x6mF7GPBrp' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1haiul6JK6m4Z7qmTb1FZf4x6mF7GPBrp" -O /src/icvmapp3r/models/hfb_t1flt2_mcdp_contrast_model_weights.h5 && \
+    wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1haiul6JK6m4Z7qmTb1FZf4x6mF7GPBrp' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1haiul6JK6m4Z7qmTb1FZf4x6mF7GPBrp" -O /src/icvmapp3r/models/hfb_multi_mcdp_contrast_model_weights.h5 && \
     rm -rf /tmp/cookies.txt && \
-    wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1rSWXdBCBab79ZspDURe6HBVnDRVkx_Iw' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1rSWXdBCBab79ZspDURe6HBVnDRVkx_Iw" -O /src/icvmapp3r/models/hfb_t1flt2_mcdp_contrast_model.json && \
+    wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1rSWXdBCBab79ZspDURe6HBVnDRVkx_Iw' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1rSWXdBCBab79ZspDURe6HBVnDRVkx_Iw" -O /src/icvmapp3r/models/hfb_multi_mcdp_contrast_model.json && \
     rm -rf /tmp/cookies.txt && \
     wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1h-5py1kYYpj2dtALVWvqTQgMt6v-3YRZ' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1h-5py1kYYpj2dtALVWvqTQgMt6v-3YRZ" -O /src/icvmapp3r/models/hfb_t1only_mcdp_multi_model_weights.h5 && \
     rm -rf /tmp/cookies.txt && \
@@ -71,6 +71,7 @@ RUN mkdir -p /src/icvmapp3r/models && \
     rm -rf /tmp/cookies.txt && \
     wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1wDFsMGxXZeqdrU3Ic2ITQztU772Vy8Hu' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1wDFsMGxXZeqdrU3Ic2ITQztU772Vy8Hu" -O /src/icvmapp3r/models/hfb_t1t2_mcdp_multi_model.json && \
     rm -rf /tmp/cookies.txt
+    
     
 RUN set -x \
     && apt-get update \
