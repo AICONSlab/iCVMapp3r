@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y git wget build-essential g++ gcc cmake 
 RUN wget https://downloads.sourceforge.net/project/c3d/c3d/Nightly/c3d-nightly-Linux-x86_64.tar.gz && \
     tar -xzvf c3d-nightly-Linux-x86_64.tar.gz && mv c3d-1.1.0-Linux-x86_64 /opt/c3d && \
     rm c3d-nightly-Linux-x86_64.tar.gz
-ENV PATH /opt/c3d/bin:${PATH}
+ENV PATH=/opt/c3d/bin:${PATH}
 
 # Install FSL
 RUN apt-get update && apt-get install -y fsl
@@ -33,10 +33,11 @@ ENV FSLDIR="/usr/share/fsl/5.0" \
 ENV PATH="/usr/lib/fsl/5.0:${PATH}"
 
 # Install ANTs
-ENV ANTSPATH /opt/ANTs
-RUN mkdir -p /opt/ANTs && \
-    curl -sSL "https://dl.dropbox.com/s/2f4sui1z6lcgyek/ANTs-Linux-centos5_x86_64-v2.2.0-0740f91.tar.gz" \
-    | tar -xzC $ANTSPATH --strip-components 1
+ENV ANTSPATH="/opt/ANTs"
+ENV ANTSTAR="/opt/ants.tar.gz"
+RUN mkdir -p "${ANTSPATH}" && \
+    wget -q --show-progress -O "${ANTSTAR}" https://huggingface.co/datasets/AICONSlab/icvmapper/resolve/dev/software/ANTs/ANTs-Linux-centos5_x86_64-v2.2.0-0740f91.tar.gz && \
+    tar -xzvf "${ANTSTAR}" -C "${ANTSPATH}" --strip-components 1
 ENV PATH=${ANTSPATH}:${PATH}
 
 # Install all needed packages based on pip installation
@@ -86,4 +87,4 @@ RUN set -x \
         libxinerama-dev 
 
 # Run icvmapper when the container launches
-ENTRYPOINT /bin/bash
+ENTRYPOINT ["/bin/bash"]
