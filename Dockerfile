@@ -36,7 +36,7 @@ ENV PATH="/usr/lib/fsl/5.0:${PATH}"
 ENV ANTSPATH="/opt/ANTs"
 ENV ANTSTAR="/opt/ants.tar.gz"
 RUN mkdir -p "${ANTSPATH}" && \
-    wget -q --show-progress -O "${ANTSTAR}" https://huggingface.co/datasets/AICONSlab/icvmapper/resolve/dev/software/ANTs/ANTs-Linux-centos5_x86_64-v2.2.0-0740f91.tar.gz && \
+    wget --no-check-certificate -q --show-progress -O "${ANTSTAR}" https://huggingface.co/datasets/AICONSlab/icvmapper/resolve/dev/software/ANTs/ANTs-Linux-centos5_x86_64-v2.2.0-0740f91.tar.gz && \
     tar -xzvf "${ANTSTAR}" -C "${ANTSPATH}" --strip-components 1
 ENV PATH=${ANTSPATH}:${PATH}
 
